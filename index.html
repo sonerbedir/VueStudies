@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <script src="https://unpkg.com/vue@next"></script>
+  <title>Kurs Planlaması</title>
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    .bgrdanger {
+      background-color: red !important;
+    }
+
+    .bgrsuccess {
+      background-color: green !important;
+    }
+    .alert{
+
+      background-color:#F8D7DA;
+      color: #8A3D44;
+      border : 1px solid lightgrey;
+      border-radius: 5px;
+      margin: 10px 0; 
+      padding: 10px;
+
+    }
+  </style>
+</head>
+
+<body>
+  <header>Kurs Planlaması</header>
+  <div id="app" class="container">
+    <div class="course--planner-app--container">
+      <div class="card">
+        <div class="user--action--container">
+          <div class="form-group">
+            <label>Kursun Adı</label>
+            <input v-model="newCourse" type="text"  @keypress.enter="addCourse" />
+            
+          </div>
+          <button class="btn-primary" @click="addCourse">Kurs Ekle</button>
+        </div>
+        <div v-if="isError" class="alert" role="alert">Kurs adı boş bırakılamaz</div>
+      </div>
+      <div class="card card-light mt-20">
+        <h3>Aktif Kurslarım</h3>
+        <ul class="list mt-20" id="courseList">
+          <li v-for="course in courseList" :key="course.name" class="course-item list-item"
+            :class="{'bgrsuccess': course.isCompleted, 'bgrdanger': !course.isCompleted}">
+            <span>{{ course.name }}</span>
+            <input type="checkbox" v-model="course.isCompleted" />
+          </li>
+          <!-- <li class="course-item list-item bg-danger">
+            <span>React.js</span>
+            <input type="checkbox" />
+          </li>
+        </ul> -->
+      </div>
+      <div class="mt-10">
+        <small>{{completedCourseInfo}}</small>
+      </div> 
+    </div>
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          newCourse: null,
+          courseList: [],
+          isError: false
+        };
+      },
+      methods: {
+        addCourse() {
+          console.log(this.newCourse);
+          if (!this.newCourse && this.newCourse === null ) {
+            this.isError = true;
+            setTimeout(() => {
+              this.isError = false
+            }, 2000)
+          } else {
+            this.courseList.push({ "name": this.newCourse, "isCompleted": false });
+            this.newCourse = "";
+          }
+
+        }
+      },
+      computed: {
+        completedCourseInfo() {
+          const completedCoursesCount = this.courseList.filter(x => { return x.isCompleted }).length;
+          const uncompletedCoursesCount = this.courseList.filter(x => { return !x.isCompleted }).length;
+          return `Tamamlanan kursların sayısı: ${completedCoursesCount} | Tamamlanmayan kursların sayısı: ${uncompletedCoursesCount}`;
+        }
+      },
+    });
+    app.mount("#app")
+  </script>
+
+</body>
+</html>
